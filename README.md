@@ -12,3 +12,9 @@ Las carpetas tendrán el siguiente orden y uso: <br>
     -'model': Aquí se encuentran las clases modelo para los objetos.
 
 en la carpeta 'bin' se encontrará el proyecto compilado.<br>
+
+###Pendientes
+<ul>
+    <li>GUI</li>
+    <li>Logica para tabla LUE</li>
+</ul>
