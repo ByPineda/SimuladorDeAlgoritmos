@@ -13,7 +13,7 @@ Las carpetas tendrán el siguiente orden y uso: <br>
 
 en la carpeta 'bin' se encontrará el proyecto compilado.<br>
 
-###Pendientes
+### Pendientes
 <ul>
     <li>GUI</li>
     <li>Logica para tabla LUE</li>
