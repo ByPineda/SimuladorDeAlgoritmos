@@ -1,5 +1,6 @@
+import control.RounRobin;
 public class SimuladordeAlgoritmos{
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        RounRobin r= new RounRObin();
     }
 }
