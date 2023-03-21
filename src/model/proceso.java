@@ -68,11 +68,11 @@ public class proceso {
     }
     // Setters
 
-    public void setTiempoLLegada(int tiempoLLegada) {
-        this.tiempoLLegada = tiempoLLegada;
+    public void setTiempoArranque(int tiempoArranque){
+        this.tiempoArranque=tiempoArranque;
     }
-    public void setRafaga(int rafaga) {
-        this.rafaga = rafaga;
+    public void setTiempoFinalizacion(int tiempoFinalizacion){
+        this.tiempoFinalizacion=tiempoFinalizacion;
     }
 
     //Auto Caulculados
