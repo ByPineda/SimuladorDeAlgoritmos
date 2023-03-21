@@ -67,42 +67,24 @@ public class proceso {
         return tasaPenalizacion;
     }
     // Setters
-    public void setId(String id) {
-        this.id = id;
-    }
+
     public void setTiempoLLegada(int tiempoLLegada) {
         this.tiempoLLegada = tiempoLLegada;
     }
     public void setRafaga(int rafaga) {
         this.rafaga = rafaga;
     }
-    public void setPrioridad(int prioridad) {
-        this.prioridad = prioridad;
-    }
-    public void setTiempoArranque(int tiempoArranque) {
-        this.tiempoArranque = tiempoArranque;
-    }
-    public void setTiempoFinalizacion(int tiempoFinalizacion) {
-        this.tiempoFinalizacion = tiempoFinalizacion;
-    }
+
     //Auto Caulculados
-    public void setTiempoRetorno() {
+    public void setParametros() {
         //"TRet = TF - TA"
         this.tiempoRetorno = this.tiempoFinalizacion - this.tiempoArranque;
-    }
-    public void setTasaDesperdicio() {
         //"W = T - t"
         this.tasaDesperdicio = this.tiempoRetorno - this.rafaga;
-    }
-    public void setTiempoRespuesta() {
         //"T = TF - TLl"
         this.tiempoRespuesta = this.tiempoFinalizacion - this.tiempoLLegada;
-    }
-    public void setTiempoEspera() {
         //"TE = TA - TLl"
         this.tiempoEspera = this.tiempoArranque - this.tiempoLLegada;
-    }
-    public void setTasaPenalizacion() {
         //"P = T / t"
         this.tasaPenalizacion = (float)this.tiempoRetorno / (float)this.rafaga;
     }
