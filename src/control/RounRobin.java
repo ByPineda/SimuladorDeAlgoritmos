@@ -8,7 +8,7 @@ public class RounRobin {
     };// Constructor
       // Metodo para implementar el planificador
 
-    public ArrayList<String> RR(ArrayList<proceso> arregloProceso) {
+    public ArrayList<String> RR(ArrayList<proceso> arregloProceso, int quantum) {
 
         ArrayList<String> arregloParaLUE = new ArrayList<String>(); // Arreglo a devolver para la tabla LUE
         ordenarProcesos(arregloProceso); // Para ordenar el arreglo
@@ -30,12 +30,12 @@ public class RounRobin {
                     if (arrRafaga[aux] == arregloProceso.get(aux).getRafaga()) {
                         arregloProceso.get(aux).setTiempoArranque(empiezaArreglo);
                     }
-                    if (arrRafaga[aux] >= 4) {
-                        for (j = 0; j < 4; j++) {
+                    if (arrRafaga[aux] >= quantum) {
+                        for (j = 0; j < quantum; j++) {
                             arregloParaLUE.add(arregloProceso.get(aux).getId());
                         }
-                        empiezaArreglo += 4;
-                        arrRafaga[aux] -= 4;
+                        empiezaArreglo += quantum;
+                        arrRafaga[aux] -= quantum;
                     } else {
                         for (j = 0; j < arrRafaga[aux]; j++) {
                             arregloParaLUE.add(arregloProceso.get(aux).getId());
