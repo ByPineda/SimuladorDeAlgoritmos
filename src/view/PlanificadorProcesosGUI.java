@@ -16,6 +16,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
+import control.RounRobin;
+import control.almacen;
+import control.fifo;
+import model.proceso;
+
 public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private DefaultTableModel lueTableModel;
@@ -26,6 +31,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
     private JTable lueTable;
     private JTextField procesoTxt, tiempoLlegadaTxt, rafagaTxt, quantumTxt;
     private JComboBox<String> metodoCmb;
+    private almacen almacen = new almacen();
 
     public PlanificadorProcesosGUI() {
         setTitle("Planificador de Procesos");
@@ -42,6 +48,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
         resultadosTableModel = new DefaultTableModel();
         resultadosTableModel.addColumn("Proceso");
+        resultadosTableModel.addColumn("Tiempo de llegada");
+        resultadosTableModel.addColumn("Ráfaga");
         resultadosTableModel.addColumn("Tiempo de arranque");
         resultadosTableModel.addColumn("Tiempo finalización");
         resultadosTableModel.addColumn("Tiempo retorno");
@@ -53,15 +61,15 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
         lueTable = new JTable(new TransposedTableModel(resultadosTableModel));
 
-        //Ejemplo de como se ve la tabla de procesos
-        for (int i = 0; i < 5; i++) {
-            Object[] fila = new Object[4];
-            fila[0] = "Proceso " + (i + 1);
-            fila[1] = i * 2;
-            fila[2] = i * 3;
-            fila[3] = i * 4;
-            procesosTableModel.addRow(fila);
-        }
+        // //Ejemplo de como se ve la tabla de procesos
+        // for (int i = 0; i < 5; i++) {
+        //     Object[] fila = new Object[4];
+        //     fila[0] = "Proceso " + (i + 1);
+        //     fila[1] = i * 2;
+        //     fila[2] = i * 3;
+        //     fila[3] = i * 4;
+        //     procesosTableModel.addRow(fila);
+        // }
 
         procesoTxt = new JTextField(10);
         tiempoLlegadaTxt = new JTextField(10);
@@ -118,6 +126,35 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             eliminarProceso();
         } else if (accion.equals("Calcular")) {
             // Aquí puedes implementar la lógica de cálculo y llenar la tabla de resultados
+            if (metodoCmb.getSelectedItem().equals("Round Robin")) {
+                /*
+                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 * IMPLEMENTAR EL RR AQUÍ
+                 * 
+                 * Notas por tomar en cuenta:
+                 * - El almacen está en la variable "almacen" y para acceder a ello se tiene que usar almacen.getArregloProcesos()
+                 *   este regresa un arrayList.
+                 * -Toma de ejemplo el for de abajo y las estructuras de datos para llenar la tabla de resultados
+                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 */
+            } else{
+                fifo fifo = new fifo();
+                almacen.setArregloProcesos(fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size()));
+                for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
+                    Object[] fila = new Object[10];
+                    fila[0] = almacen.getArregloProcesos().get(i).getId();
+                    fila[1] = almacen.getArregloProcesos().get(i).getTiempoLLegada();
+                    fila[2] = almacen.getArregloProcesos().get(i).getRafaga();
+                    fila[3] = almacen.getArregloProcesos().get(i).getTiempoArranque();
+                    fila[4] = almacen.getArregloProcesos().get(i).getTiempoFinalizacion();
+                    fila[5] = almacen.getArregloProcesos().get(i).getTiempoRetorno();
+                    fila[6] = almacen.getArregloProcesos().get(i).getTiempoRespuesta();
+                    fila[7] = almacen.getArregloProcesos().get(i).getTasaDesperdicio();
+                    fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
+                    fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
+                    resultadosTableModel.addRow(fila);
+                }
+            }
         }
     }
 
@@ -158,6 +195,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         if (metodoCmb.getSelectedItem().equals("Round Robin")) {
             try {
                 quantum = Integer.parseInt(quantumTxt.getText());
+                almacen.setQuantum(quantum);
                 if (quantum <= 0) {
                     JOptionPane.showMessageDialog(this, "El quantum debe ser un número entero positivo");
                     return;
@@ -168,7 +206,12 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             }
         }
 
-        
+        //Insertar proceso en el almacén-------------------------------------------------------
+        proceso procAux = new proceso(proceso, tiempoLlegada, rafaga);
+        almacen.getArregloProcesos().add(procAux);
+        // DEBUG CODE System.out.println("Proceso " + almacen.getArregloProcesos().get(0).getId() + " agregado");
+
+        //Insertar proceso en la tabla---------------------------------------------------------
 
         Object[] fila = new Object[4];
         fila[0] = proceso;
@@ -190,6 +233,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             return;
         }
         procesosTableModel.removeRow(filaSeleccionada);
+        almacen.getArregloProcesos().remove(filaSeleccionada);
+        // DEBUG CODE  System.out.println("Proceso " + almacen.getArregloProcesos().get(0).getId() + " agregado");
     }
 
     class TransposedTableModel extends AbstractTableModel {

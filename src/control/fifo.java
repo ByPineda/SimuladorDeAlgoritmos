@@ -21,6 +21,16 @@ public class fifo {;
                 }
             }
         }
+        // Calculamos los tiempos de arranque y finalizacion
+        int tiempo = 0;
+        for (proceso proceso : listaProcesosFinal) {
+            if (tiempo < proceso.getTiempoLLegada()) {
+                tiempo = proceso.getTiempoLLegada();
+            }
+            proceso.setTiempoArranque(tiempo);
+            tiempo += proceso.getRafaga();
+            proceso.setTiempoFinalizacion(tiempo);
+        }
         // Calculamos los derivados del proceso
         for (proceso proceso : listaProcesosFinal) {
             proceso.setParametros();
