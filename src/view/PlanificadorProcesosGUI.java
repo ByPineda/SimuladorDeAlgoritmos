@@ -1,4 +1,4 @@
-package another;
+package view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -121,6 +121,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
     }
 
+    //METODOS PARA AGREGAR Y ELIMINAR PROCESOS--------------------------------------
     private void agregarProceso() {
         String proceso = procesoTxt.getText();
         int tiempoLlegada = 0;
@@ -167,6 +168,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             }
         }
 
+        
+
         Object[] fila = new Object[4];
         fila[0] = proceso;
         fila[1] = tiempoLlegada;
@@ -187,11 +190,6 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             return;
         }
         procesosTableModel.removeRow(filaSeleccionada);
-    }
-
-    public static void main(String[] args) {
-        PlanificadorProcesosGUI gui = new PlanificadorProcesosGUI();
-        gui.setVisible(true);
     }
 
     class TransposedTableModel extends AbstractTableModel {
