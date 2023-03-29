@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -59,16 +61,26 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         resultadosTableModel.addColumn("Tiempo de espera");
         resultadosTable = new JTable(resultadosTableModel);
 
-        lueTable = new JTable(new TransposedTableModel(resultadosTableModel));
+        lueTableModel = new DefaultTableModel();
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTableModel.addColumn(" ");
+        lueTable = new JTable(lueTableModel);
 
         // //Ejemplo de como se ve la tabla de procesos
         // for (int i = 0; i < 5; i++) {
-        //     Object[] fila = new Object[4];
-        //     fila[0] = "Proceso " + (i + 1);
-        //     fila[1] = i * 2;
-        //     fila[2] = i * 3;
-        //     fila[3] = i * 4;
-        //     procesosTableModel.addRow(fila);
+        // Object[] fila = new Object[4];
+        // fila[0] = "Proceso " + (i + 1);
+        // fila[1] = i * 2;
+        // fila[2] = i * 3;
+        // fila[3] = i * 4;
+        // procesosTableModel.addRow(fila);
         // }
 
         procesoTxt = new JTextField(10);
@@ -91,7 +103,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         datosPanel.add(rafagaTxt);
         datosPanel.add(quantumTxt);
 
-        String[] metodos = {"FIFO", "Round Robin"};
+        String[] metodos = { "FIFO", "Round Robin" };
         metodoCmb = new JComboBox<>(metodos);
         metodoCmb.setSelectedIndex(0);
         JPanel metodoPanel = new JPanel(new FlowLayout());
@@ -128,18 +140,24 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             // Aquí puedes implementar la lógica de cálculo y llenar la tabla de resultados
             if (metodoCmb.getSelectedItem().equals("Round Robin")) {
                 /*
-                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 * !!!!!!!!!!!!!!!!!!!!!!!!
                  * IMPLEMENTAR EL RR AQUÍ
                  * 
                  * Notas por tomar en cuenta:
-                 * - El almacen está en la variable "almacen" y para acceder a ello se tiene que usar almacen.getArregloProcesos()
-                 *   este regresa un arrayList.
-                 * -Toma de ejemplo el for de abajo y las estructuras de datos para llenar la tabla de resultados
-                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 * - El almacen está en la variable "almacen" y para acceder a ello se tiene que
+                 * usar almacen.getArregloProcesos()
+                 * este regresa un arrayList.
+                 * -Toma de ejemplo el for de abajo y las estructuras de datos para llenar la
+                 * tabla de resultados
+                 * 
+                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 * !!!!!!!!!!!!!!!!!!!!!!!!
                  */
-            } else{
+            } else {
                 fifo fifo = new fifo();
-                almacen.setArregloProcesos(fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size()));
+                almacen.setArregloProcesos(
+                        fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size()));
                 for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
                     Object[] fila = new Object[10];
                     fila[0] = almacen.getArregloProcesos().get(i).getId();
@@ -154,11 +172,14 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
                 }
+                poblarTablaLUE_FIFO(almacen.getArregloProcesos());
+                JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
         }
     }
 
-    //METODOS PARA AGREGAR Y ELIMINAR PROCESOS--------------------------------------
+    // METODOS PARA AGREGAR Y ELIMINAR
+    // PROCESOS--------------------------------------
     private void agregarProceso() {
         String proceso = procesoTxt.getText();
         int tiempoLlegada = 0;
@@ -206,12 +227,15 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             }
         }
 
-        //Insertar proceso en el almacén-------------------------------------------------------
+        // Insertar proceso en el
+        // almacén-------------------------------------------------------
         proceso procAux = new proceso(proceso, tiempoLlegada, rafaga);
         almacen.getArregloProcesos().add(procAux);
-        // DEBUG CODE System.out.println("Proceso " + almacen.getArregloProcesos().get(0).getId() + " agregado");
+        // DEBUG CODE System.out.println("Proceso " +
+        // almacen.getArregloProcesos().get(0).getId() + " agregado");
 
-        //Insertar proceso en la tabla---------------------------------------------------------
+        // Insertar proceso en la
+        // tabla---------------------------------------------------------
 
         Object[] fila = new Object[4];
         fila[0] = proceso;
@@ -226,6 +250,113 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         quantumTxt.setText("");
     }
 
+    // METODO PARA POBLAR LA TABLA LUE PARA
+    // FIFO------------------------------------------
+    private void poblarTablaLUE_FIFO(ArrayList<proceso> arregloProcesos) {
+        int tiempoDeRafagasTotales = 0;
+        int tablasLue = 0;
+
+        // CALCULAMOS EL NUMERO DE TABLAS QUE NECESITAMOS
+        for (int i = 0; i < arregloProcesos.size(); i++) {
+            tiempoDeRafagasTotales += arregloProcesos.get(i).getRafaga();
+        }
+
+        if (tiempoDeRafagasTotales % 8 != 0) {
+            tiempoDeRafagasTotales += tiempoDeRafagasTotales + (8 - (tiempoDeRafagasTotales % 8));
+        }
+
+        tablasLue = (tiempoDeRafagasTotales / 8) + 3;
+
+        // CREAMOS LA TABLA
+        Object fila[] = new Object[9];
+        for (int i = 0; i < fila.length; i++) {
+            fila[i] = " ";
+        }
+
+        for (int i = 0; i < (tablasLue * 3); i++) {
+            lueTableModel.addRow(fila);
+        }
+
+        // POBLAMOS LA COLUMNA DE LUE
+
+        for (int i = 0; i < lueTableModel.getRowCount(); i += 3) {
+            lueTableModel.setValueAt("L", i, 0);
+            lueTableModel.setValueAt("U", i + 1, 0);
+            lueTableModel.setValueAt("E", i + 2, 0);
+        }
+
+        // POBLAMOS LA FILA DEL CENTRO - U
+        int contador = 0;
+        int contadorRow = 1;
+        for (int i = 0; i < tablasLue; i++) {
+            contador = poblarUdeLue(contadorRow, contador);
+            contadorRow += 3;
+        }
+
+        // POBLAMOS LA FILA DE ARRIBA - L
+
+        contador = 0;
+        int contadorAux = 0;
+        contadorRow = 0;
+
+        for (int i = 0; i < tablasLue; i++) {
+            contadorAux = auxPoblarLdeLue(contadorRow, contador, contadorAux, arregloProcesos);
+            contador = poblarLdeLue(contadorRow, contador, contadorAux, arregloProcesos);
+            contadorRow += 3;
+        }
+
+    }
+
+    private int poblarLdeLue(int row, int contador, int indexMax, ArrayList<proceso> arregloProcesos) {
+        for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
+            if (i % 2 == 0) {
+                continue;
+            } else {
+                if (contador == arregloProcesos.size()) {
+                    indexMax = contador - 1;
+                } else if (contador < arregloProcesos.size()
+                        && arregloProcesos.get(contador).getTiempoLLegada() == contador) {
+                    lueTableModel.setValueAt(arregloProcesos.get(contador).getId(), row, i);
+                } else if (contador > arregloProcesos.size()
+                        && arregloProcesos.get(indexMax).getTiempoLLegada() == contador) {
+                    lueTableModel.setValueAt(arregloProcesos.get(indexMax).getId(), row, i);
+                } else {
+                    lueTableModel.setValueAt(" ", row, i);
+                }
+                contador++;
+            }
+
+        }
+        return contador;
+    }
+
+    private int auxPoblarLdeLue(int row, int contador, int indexMax, ArrayList<proceso> arregloProcesos) {
+        for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
+            if (i % 2 == 0) {
+                continue;
+            } else {
+                if (contador == arregloProcesos.size()) {
+                    indexMax = contador - 1;
+                }
+                contador++;
+            }
+        }
+        return indexMax;
+    }
+
+    private int poblarUdeLue(int row, int contador) {
+
+        for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
+            if (i % 2 == 0) {
+                continue;
+            } else {
+                lueTableModel.setValueAt(contador, row, i);
+                contador++;
+            }
+        }
+        return contador;
+    }
+
     private void eliminarProceso() {
         int filaSeleccionada = procesosTable.getSelectedRow();
         if (filaSeleccionada == -1) {
@@ -234,7 +365,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
         procesosTableModel.removeRow(filaSeleccionada);
         almacen.getArregloProcesos().remove(filaSeleccionada);
-        // DEBUG CODE  System.out.println("Proceso " + almacen.getArregloProcesos().get(0).getId() + " agregado");
+        // DEBUG CODE System.out.println("Proceso " +
+        // almacen.getArregloProcesos().get(0).getId() + " agregado");
     }
 
     class TransposedTableModel extends AbstractTableModel {
