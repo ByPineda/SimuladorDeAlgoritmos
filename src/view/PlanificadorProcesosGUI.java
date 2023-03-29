@@ -301,11 +301,18 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
         for (int i = 0; i < tablasLue; i++) {
             contadorAux = auxPoblarLdeLue(contadorRow, contador, contadorAux, arregloProcesos);
+            /*
+             * AQUI SE SALTA PROCESOS
+             * VERFICAR QUE NO SE SALTE PROCESOS
+             *
+             */
             contador = poblarLdeLue(contadorRow, contador, contadorAux, arregloProcesos);
             contadorRow += 3;
         }
 
     }
+
+    //METODOS PARA POBLAR LA FILA L DE LUE - L ----------------------------------------------------------------
 
     private int poblarLdeLue(int row, int contador, int indexMax, ArrayList<proceso> arregloProcesos) {
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
@@ -343,7 +350,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
         return indexMax;
     }
+//--------------------------------------------------------------------------------------------------------------------------------
 
+//METODOS PARA POBLAR LA FILA U DE LUE - U ----------------------------------------------------------------*******
     private int poblarUdeLue(int row, int contador) {
 
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
@@ -356,6 +365,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
         return contador;
     }
+//--------------------------------------------------------------------------------------------------------------------------------
 
     private void eliminarProceso() {
         int filaSeleccionada = procesosTable.getSelectedRow();
