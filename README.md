@@ -18,7 +18,7 @@ en la carpeta 'bin' se encontrará el proyecto compilado.<br>
     <li>Ninguno por el momento</li>
 </ul>
 
-##Anotaciones
+## Anotaciones
 Este proyecto es open source y lo quiero dejar publico para la comunidad universitaria que lo necesite.
 Si quieren implementar más algoritmos lo pueden hacer, las funciones estan hechas solo es cuenstión de añadirlo.
 Esto se debe a que utilizamos el modelo MVC (Model Control View) y nos permite tener un código limpio, con poca cohesión y alto acoplamiento.
