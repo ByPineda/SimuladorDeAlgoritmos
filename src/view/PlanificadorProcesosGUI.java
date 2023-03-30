@@ -240,8 +240,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         // almacén-------------------------------------------------------
         proceso procAux = new proceso(proceso, tiempoLlegada, rafaga);
         almacen.getArregloProcesos().add(procAux);
-        // DEBUG CODE System.out.println("Proceso " +
-        // almacen.getArregloProcesos().get(0).getId() + " agregado");
+        // DEBUG CODE System.out.println("Proceso " + almacen.getArregloProcesos().get(0).getId() + " agregado");
 
         // Insertar proceso en la
         // tabla---------------------------------------------------------
