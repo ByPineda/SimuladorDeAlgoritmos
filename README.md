@@ -15,7 +15,8 @@ en la carpeta 'bin' se encontrará el proyecto compilado.<br>
 
 ## Pendientes
 <ul>
-    <li>Ninguno por el momento</li>
+    <li>Quitar propiedades de edición de las tablas Resultado y LUE</li>
+    <li>Implementar los promedios de la tabla de Resultados (Tret, T, W, P, TEspera)</li>
 </ul>
 
 ## Anotaciones
