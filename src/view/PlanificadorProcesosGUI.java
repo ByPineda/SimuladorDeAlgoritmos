@@ -22,6 +22,7 @@ import control.RounRobin;
 import control.almacen;
 import control.fifo;
 import model.proceso;
+import lib.*;
 
 public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
@@ -126,6 +127,10 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         principalPanel.add(botonesPanel, BorderLayout.SOUTH);
 
         setContentPane(principalPanel);
+        TextPrompt placeholder = new TextPrompt("Nombre de Proceso", procesoTxt);
+        TextPrompt placeholder2 = new TextPrompt("Tiempo de llegada", tiempoLlegadaTxt);
+        TextPrompt placeholder3 = new TextPrompt("Ráfaga", rafagaTxt);
+        TextPrompt placeholder4 = new TextPrompt("Quantum", quantumTxt);
 
     }
 
@@ -307,7 +312,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             contadorRow += 3;
         }
 
-        // paraTablaE
+        // POBLAMOS LA FILA DE ABAJO - E
         contador = 0;
         contadorRow = 2;
 
@@ -325,16 +330,12 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
             if (i % 2 != 0) {
                 valor = Integer.parseInt(lueTableModel.getValueAt(row - 1, i).toString());
-                if (valor <= arregloProcesos.size()) {
-                    if (valor == 0) {
+                if (valor < arregloProcesos.size()) {
+
                         id = arregloProcesos.get(valor);
                         lueTableModel.setValueAt(id, row, i + 1);
                         contador += 1;
-                    } else {
-                        id = arregloProcesos.get(valor-1);
-                        lueTableModel.setValueAt(id, row, i + 1);
-                        contador += 1;
-                    }
+
                 }
             }
         }

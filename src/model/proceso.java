@@ -85,14 +85,15 @@ public class proceso {
     public void setParametros() {
         //"TRet = TF - TA"
         this.tiempoRetorno = this.tiempoFinalizacion - this.tiempoArranque;
-        //"W = T - t"
-        this.tasaDesperdicio = this.tiempoRetorno - this.rafaga;
+
         //"T = TF - TLl"
         this.tiempoRespuesta = this.tiempoFinalizacion - this.tiempoLLegada;
+        //"W = T - t"
+        this.tasaDesperdicio = this.tiempoRespuesta-this.rafaga;
         //"TE = TA - TLl"
         this.tiempoEspera = this.tiempoArranque - this.tiempoLLegada;
         //"P = T / t"
-        this.tasaPenalizacion = (float)this.tiempoRetorno / (float)this.rafaga;
+        this.tasaPenalizacion = (float)this.tiempoRespuesta / (float)this.rafaga;
     }
 
 
