@@ -9,40 +9,35 @@ public class fifo {;
     public fifo(){};
 
     // Metodo del algoritmo.
-    public ArrayList<proceso> FCFS(ArrayList<proceso> listaProcesos, int n) {
-        ArrayList<proceso> listaProcesosFinal = listaProcesos;
+    public ArrayList<String> FCFS(ArrayList<proceso> listaProcesos, int n) {
+         ArrayList<String> arregloParaLUE = new ArrayList<String>();
         // Ordenar la lista de procesos por tiempo de llegada CON ALGORITMO BURBUJA
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n - 1; j++) {
-                if (listaProcesosFinal.get(j).getTiempoLLegada() > listaProcesosFinal.get(j + 1).getTiempoLLegada()) {
-                    proceso aux = listaProcesosFinal.get(j);
-                    listaProcesosFinal.set(j, listaProcesosFinal.get(j + 1));
-                    listaProcesosFinal.set(j + 1, aux);
+                if (listaProcesos.get(j).getTiempoLLegada() > listaProcesos.get(j + 1).getTiempoLLegada()) {
+                    proceso aux = listaProcesos.get(j);
+                    listaProcesos.set(j, listaProcesos.get(j + 1));
+                    listaProcesos.set(j + 1, aux);
                 }
             }
         }
         // Calculamos los tiempos de arranque y finalizacion
         int tiempo = 0;
-        for (proceso proceso : listaProcesosFinal) {
+        for (proceso proceso : listaProcesos) {
             if (tiempo < proceso.getTiempoLLegada()) {
                 tiempo = proceso.getTiempoLLegada();
             }
             proceso.setTiempoArranque(tiempo);
-            tiempo += proceso.getRafaga();
+            tiempo += proceso.getRafaga(); 
             proceso.setTiempoFinalizacion(tiempo);
+            for(int i=proceso.getTiempoArranque();i<proceso.getTiempoFinalizacion();i++){
+                arregloParaLUE.add(proceso.getId());
+            }
         }
         // Calculamos los derivados del proceso
-        for (proceso proceso : listaProcesosFinal) {
+        for (proceso proceso : listaProcesos) {
             proceso.setParametros();
         }
-        imprimirListaProcesos(listaProcesosFinal);
-        return listaProcesosFinal;
-    }
-
-    //Imprimir la lista de procesos
-    public void imprimirListaProcesos(ArrayList<proceso> listaProcesos) {
-        for (proceso proceso : listaProcesos) {
-            System.out.println(proceso.getId());
-        }
+        return arregloParaLUE;
     }
 }

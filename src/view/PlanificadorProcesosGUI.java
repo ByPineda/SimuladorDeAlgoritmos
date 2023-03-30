@@ -138,26 +138,10 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             eliminarProceso();
         } else if (accion.equals("Calcular")) {
             // Aquí puedes implementar la lógica de cálculo y llenar la tabla de resultados
-            if (metodoCmb.getSelectedItem().equals("Round Robin")) {
-                /*
-                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                 * !!!!!!!!!!!!!!!!!!!!!!!!
-                 * IMPLEMENTAR EL RR AQUÍ
-                 * 
-                 * Notas por tomar en cuenta:
-                 * - El almacen está en la variable "almacen" y para acceder a ello se tiene que
-                 * usar almacen.getArregloProcesos()
-                 * este regresa un arrayList.
-                 * -Toma de ejemplo el for de abajo y las estructuras de datos para llenar la
-                 * tabla de resultados
-                 * 
-                 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                 * !!!!!!!!!!!!!!!!!!!!!!!!
-                 */
-            } else {
-                fifo fifo = new fifo();
-                almacen.setArregloProcesos(
-                        fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size()));
+            if (((String) metodoCmb.getSelectedItem()).equals("Round Robin")) {
+                ArrayList<String> arregloParaLUE = new ArrayList<String>();
+                RounRobin RR=new RounRobin();
+                arregloParaLUE=RR.RR(almacen.getArregloProcesos(),almacen.getQuantum());
                 for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
                     Object[] fila = new Object[10];
                     fila[0] = almacen.getArregloProcesos().get(i).getId();
@@ -172,7 +156,27 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
                 }
-                poblarTablaLUE_FIFO(almacen.getArregloProcesos());
+                poblarTablaLUE_FIFO(almacen.getArregloProcesos(),arregloParaLUE);
+            } else {
+                fifo fifo = new fifo();
+                
+                 ArrayList<String> arregloParaLUE = new ArrayList<String>();
+                 arregloParaLUE=fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size());
+                for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
+                    Object[] fila = new Object[10];
+                    fila[0] = almacen.getArregloProcesos().get(i).getId();
+                    fila[1] = almacen.getArregloProcesos().get(i).getTiempoLLegada();
+                    fila[2] = almacen.getArregloProcesos().get(i).getRafaga();
+                    fila[3] = almacen.getArregloProcesos().get(i).getTiempoArranque();
+                    fila[4] = almacen.getArregloProcesos().get(i).getTiempoFinalizacion();
+                    fila[5] = almacen.getArregloProcesos().get(i).getTiempoRetorno();
+                    fila[6] = almacen.getArregloProcesos().get(i).getTiempoRespuesta();
+                    fila[7] = almacen.getArregloProcesos().get(i).getTasaDesperdicio();
+                    fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
+                    fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
+                    resultadosTableModel.addRow(fila);
+                }
+                poblarTablaLUE_FIFO(almacen.getArregloProcesos(),arregloParaLUE);
                 JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
         }
@@ -252,7 +256,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
     // METODO PARA POBLAR LA TABLA LUE PARA
     // FIFO------------------------------------------
-    private void poblarTablaLUE_FIFO(ArrayList<proceso> arregloProcesos) {
+    private void poblarTablaLUE_FIFO(ArrayList<proceso> arregloProcesos,ArrayList<String> arregloLUE) {
         int tiempoDeRafagasTotales = 0;
         int tablasLue = 0;
 
@@ -296,68 +300,48 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         // POBLAMOS LA FILA DE ARRIBA - L
 
         contador = 0;
-        int contadorAux = 0;
         contadorRow = 0;
 
         for (int i = 0; i < tablasLue; i++) {
-            contadorAux = auxPoblarLdeLue(contadorRow, contador, contadorAux, arregloProcesos);
-            /*
-             * AQUI SE SALTA PROCESOS
-             * VERFICAR QUE NO SE SALTE PROCESOS
-             *
-             */
-            contador = poblarLdeLue(contadorRow, contador, contadorAux, arregloProcesos);
+            poblarLdeLue(contadorRow, contador, arregloProcesos);
+            contadorRow += 3;
+        }
+        
+        //paraTablaE
+        contador = 0;
+        contadorRow = 2;
+        
+        for (int i = 0; i < tablasLue; i++) {
+            tablaE(contadorRow, contador, arregloLUE);
             contadorRow += 3;
         }
 
     }
-
-    //METODOS PARA POBLAR LA FILA L DE LUE - L ----------------------------------------------------------------
-
-    private int poblarLdeLue(int row, int contador, int indexMax, ArrayList<proceso> arregloProcesos) {
+    
+    private int tablaE(int row, int contador,ArrayList<String> arregloProcesos){
+        int valor;
+        String id;
+        
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
-            if (i % 2 == 0) {
-                continue;
-            } else {
-                if (contador == arregloProcesos.size()) {
-                    indexMax = contador - 1;
-                } else if (contador < arregloProcesos.size()
-                        && arregloProcesos.get(contador).getTiempoLLegada() == contador) {
-                    lueTableModel.setValueAt(arregloProcesos.get(contador).getId(), row, i);
-                } else if (contador > arregloProcesos.size()
-                        && arregloProcesos.get(indexMax).getTiempoLLegada() == contador) {
-                    lueTableModel.setValueAt(arregloProcesos.get(indexMax).getId(), row, i);
-                } else {
-                    lueTableModel.setValueAt(" ", row, i);
+            if (i % 2 !=0){
+                valor=Integer.parseInt(lueTableModel.getValueAt(row-1,i).toString()); 
+                if(valor<=arregloProcesos.size()){
+            id=arregloProcesos.get(valor);
+            lueTableModel.setValueAt(id, row, i+1);
+                    contador+=1;
                 }
-                contador++;
-            }
-
+        }
         }
         return contador;
+    
     }
-
-    private int auxPoblarLdeLue(int row, int contador, int indexMax, ArrayList<proceso> arregloProcesos) {
-        for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
-            if (i % 2 == 0) {
-                continue;
-            } else {
-                if (contador == arregloProcesos.size()) {
-                    indexMax = contador - 1;
-                }
-                contador++;
-            }
-        }
-        return indexMax;
-    }
-//--------------------------------------------------------------------------------------------------------------------------------
-
-//METODOS PARA POBLAR LA FILA U DE LUE - U ----------------------------------------------------------------*******
-    private int poblarUdeLue(int row, int contador) {
+    
+    
+    
+      private int poblarUdeLue(int row, int contador) {
 
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
             if (i % 2 == 0) {
-                continue;
             } else {
                 lueTableModel.setValueAt(contador, row, i);
                 contador++;
@@ -365,7 +349,30 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
         return contador;
     }
-//--------------------------------------------------------------------------------------------------------------------------------
+
+    private int poblarLdeLue(int row, int contador, ArrayList<proceso> arregloProcesos) {
+        int aux=0;
+        int valor;
+        for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
+            if (i % 2 !=0){
+            valor=Integer.parseInt(lueTableModel.getValueAt(row+1,i).toString()); 
+            for(int j=contador;j<arregloProcesos.size();j++){
+                 if (arregloProcesos.get(j).getTiempoLLegada() == valor && aux==0 ){
+                     lueTableModel.setValueAt(arregloProcesos.get(j).getId(), row, i);
+                    contador+=1;
+                    aux+=1;
+                 }else if(aux==1 && valor == arregloProcesos.get(j).getTiempoLLegada() ){
+                     contador+=1;
+                 }
+            }
+             aux=0;
+            }
+        }
+        return contador;
+    }
+
+
+
 
     private void eliminarProceso() {
         int filaSeleccionada = procesosTable.getSelectedRow();

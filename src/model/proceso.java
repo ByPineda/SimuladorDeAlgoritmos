@@ -23,6 +23,9 @@ public class proceso {
         this.tiempoLLegada = tiempoLLegada;
         this.rafaga = rafaga;
     }
+    public proceso(String id) {
+        this.id = id;
+    }
 
     //Contrsuctor para proceso con prioridad
     public proceso(String id, int tiempoLLegada, int rafaga, int prioridad) {
@@ -67,6 +70,9 @@ public class proceso {
         return tasaPenalizacion;
     }
     // Setters
+    public void setId(String id){
+        this.id=id;
+    }
 
     public void setTiempoArranque(int tiempoArranque){
         this.tiempoArranque=tiempoArranque;
