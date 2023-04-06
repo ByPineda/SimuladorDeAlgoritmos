@@ -98,6 +98,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         JButton calcularBtn = new JButton("Calcular");
         calcularBtn.addActionListener(this);
 
+        JButton limpiarBtn = new JButton("Limpiar");
+        limpiarBtn.addActionListener(this);
+
         JPanel datosPanel = new JPanel(new FlowLayout());
         datosPanel.add(procesoTxt);
         datosPanel.add(tiempoLlegadaTxt);
@@ -114,6 +117,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         botonesPanel.add(agregarBtn);
         botonesPanel.add(eliminarBtn);
         botonesPanel.add(calcularBtn);
+        botonesPanel.add(limpiarBtn);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Procesos", new JScrollPane(procesosTable));
@@ -184,7 +188,11 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                 poblarTablaLUE_FIFO(almacen.getArregloProcesos(), arregloParaLUE);
                 JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
+        } else if (accion.equals("Limpiar")) {
+            JOptionPane.showMessageDialog(this, "Limpiando");
+            limpiar();
         }
+
     }
 
     // METODOS PARA AGREGAR Y ELIMINAR
@@ -240,7 +248,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         // almacén-------------------------------------------------------
         proceso procAux = new proceso(proceso, tiempoLlegada, rafaga);
         almacen.getArregloProcesos().add(procAux);
-        // DEBUG CODE System.out.println("Proceso " + almacen.getArregloProcesos().get(0).getId() + " agregado");
+        // DEBUG CODE System.out.println("Proceso " +
+        // almacen.getArregloProcesos().get(0).getId() + " agregado");
 
         // Insertar proceso en la
         // tabla---------------------------------------------------------
@@ -331,9 +340,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                 valor = Integer.parseInt(lueTableModel.getValueAt(row - 1, i).toString());
                 if (valor < arregloProcesos.size()) {
 
-                        id = arregloProcesos.get(valor);
-                        lueTableModel.setValueAt(id, row, i + 1);
-                        contador += 1;
+                    id = arregloProcesos.get(valor);
+                    lueTableModel.setValueAt(id, row, i + 1);
+                    contador += 1;
 
                 }
             }
@@ -385,6 +394,26 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         almacen.getArregloProcesos().remove(filaSeleccionada);
         // DEBUG CODE System.out.println("Proceso " +
         // almacen.getArregloProcesos().get(0).getId() + " agregado");
+    }
+
+    private void limpiar() {
+        try {
+            int numeroDeFilas = procesosTableModel.getRowCount();
+            int filasLues = lueTableModel.getRowCount();
+
+            for (int i = numeroDeFilas; i >= 0; i--) {
+                procesosTableModel.removeRow(i);
+                resultadosTableModel.removeRow(i);
+            }
+            for(int i = filasLues-1; i >= 0; i--){
+                lueTableModel.removeRow(i);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al limpiar");
+
+        }
+
     }
 
     class TransposedTableModel extends AbstractTableModel {
