@@ -24,6 +24,15 @@ import control.fifo;
 import model.proceso;
 import lib.*;
 
+class TablaNoEditable extends DefaultTableModel{
+    public TablaNoEditable() {
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+}
 public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private DefaultTableModel lueTableModel;
@@ -49,7 +58,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         procesosTableModel.addColumn("Quantum");
         procesosTable = new JTable(procesosTableModel);
 
-        resultadosTableModel = new DefaultTableModel();
+        resultadosTableModel = new TablaNoEditable();
         resultadosTableModel.addColumn("Proceso");
         resultadosTableModel.addColumn("Tiempo de llegada");
         resultadosTableModel.addColumn("Ráfaga");
@@ -62,7 +71,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         resultadosTableModel.addColumn("Tiempo de espera");
         resultadosTable = new JTable(resultadosTableModel);
 
-        lueTableModel = new DefaultTableModel();
+        lueTableModel = new TablaNoEditable();
         lueTableModel.addColumn(" ");
         lueTableModel.addColumn(" ");
         lueTableModel.addColumn(" ");
@@ -165,7 +174,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
                 }
-                poblarTablaLUE_FIFO(almacen.getArregloProcesos(), arregloParaLUE);
+                poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
             } else {
                 fifo fifo = new fifo();
 
@@ -185,7 +194,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
                 }
-                poblarTablaLUE_FIFO(almacen.getArregloProcesos(), arregloParaLUE);
+                poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
                 JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
         } else if (accion.equals("Limpiar")) {
@@ -269,7 +278,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
     // METODO PARA POBLAR LA TABLA LUE PARA
     // FIFO------------------------------------------
-    private void poblarTablaLUE_FIFO(ArrayList<proceso> arregloProcesos, ArrayList<String> arregloLUE) {
+    private void poblarTablaLUE(ArrayList<proceso> arregloProcesos, ArrayList<String> arregloLUE) {
         int tiempoDeRafagasTotales = 0;
         int tablasLue = 0;
 
@@ -306,7 +315,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         int contador = 0;
         int contadorRow = 1;
         for (int i = 0; i < tablasLue; i++) {
-            contador = poblarUdeLue(contadorRow, contador);
+            contador = poblarU(contadorRow, contador);
             contadorRow += 3;
         }
 
@@ -316,7 +325,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         contadorRow = 0;
 
         for (int i = 0; i < tablasLue; i++) {
-            poblarLdeLue(contadorRow, contador, arregloProcesos);
+            poblarL(contadorRow, contador, arregloProcesos);
             contadorRow += 3;
         }
 
@@ -325,13 +334,13 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         contadorRow = 2;
 
         for (int i = 0; i < tablasLue; i++) {
-            tablaE(contadorRow, contador, arregloLUE);
+            poblarE(contadorRow, contador, arregloLUE);
             contadorRow += 3;
         }
 
     }
 
-    private int tablaE(int row, int contador, ArrayList<String> arregloProcesos) {
+    private int poblarE(int row, int contador, ArrayList<String> arregloProcesos) {
         int valor;
         String id;
 
@@ -351,7 +360,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
     }
 
-    private int poblarUdeLue(int row, int contador) {
+    private int poblarU(int row, int contador) {
 
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
             if (i % 2 == 0) {
@@ -363,7 +372,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         return contador;
     }
 
-    private int poblarLdeLue(int row, int contador, ArrayList<proceso> arregloProcesos) {
+    private int poblarL(int row, int contador, ArrayList<proceso> arregloProcesos) {
         int aux = 0;
         int valor;
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
@@ -401,13 +410,16 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             int numeroDeFilas = procesosTableModel.getRowCount();
             int filasLues = lueTableModel.getRowCount();
 
-            for (int i = numeroDeFilas; i >= 0; i--) {
+            for (int i = numeroDeFilas-1; i >= 0; i--) {
                 procesosTableModel.removeRow(i);
                 resultadosTableModel.removeRow(i);
             }
             for(int i = filasLues-1; i >= 0; i--){
                 lueTableModel.removeRow(i);
             }
+            almacen.getArregloProcesos().clear();
+            
+            
 
         } catch (Exception e) {
             System.out.println("Error al limpiar");

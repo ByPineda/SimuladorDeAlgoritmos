@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 public class almacen {
     private ArrayList<proceso> ArregloProcesos;
+    private ArrayList<String> ArregloLUE;
     private int quantum;
     
     public almacen() {
         ArregloProcesos = new ArrayList<proceso>();
+        ArregloLUE = new ArrayList<String>();
     }
 
     //Setters y Getters
@@ -15,8 +17,16 @@ public class almacen {
         return ArregloProcesos;
     }
 
+    public ArrayList<String> getArregloLUE() {
+        return ArregloLUE;
+    }
+
     public void setArregloProcesos(ArrayList<proceso> ArregloProcesos) {
         this.ArregloProcesos = ArregloProcesos;
+    }
+
+    public void setArregloLUE(ArrayList<String> ArregloLUE) {
+        this.ArregloLUE = ArregloLUE;
     }
 
     public int getQuantum() {
