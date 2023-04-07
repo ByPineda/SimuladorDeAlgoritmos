@@ -428,56 +428,5 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
     }
 
-    class TransposedTableModel extends AbstractTableModel {
-        private DefaultTableModel originalModel;
-
-        public TransposedTableModel(DefaultTableModel originalModel) {
-            this.originalModel = originalModel;
-        }
-
-        @Override
-        public int getRowCount() {
-            return originalModel.getColumnCount();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return originalModel.getRowCount();
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            return originalModel.getValueAt(column, row);
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int row, int column) {
-            originalModel.setValueAt(aValue, column, row);
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return "LUE" + (column + 1);
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return originalModel.getRowCount() > 0 ? originalModel.getValueAt(0, columnIndex).getClass() : Object.class;
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return originalModel.isCellEditable(column, row);
-        }
-
-        @Override
-        public void addTableModelListener(javax.swing.event.TableModelListener l) {
-            originalModel.addTableModelListener(l);
-        }
-
-        @Override
-        public void removeTableModelListener(javax.swing.event.TableModelListener l) {
-            originalModel.removeTableModelListener(l);
-        }
-    }
+    
 }
