@@ -174,6 +174,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
                 }
+                
+
                 poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
             } else {
                 fifo fifo = new fifo();
@@ -193,7 +195,34 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
+
+                    
                 }
+                almacen.obtenerPromedios();
+                Object[] fila = new Object[10];
+                fila[0] = "Tiempo Total:";
+                fila[1] = "";
+                fila[2] = "";
+                fila[3] = "";
+                fila[4] = "";
+                fila[5] = almacen.getTRetTotal();
+                fila[6] = almacen.getTRespTotal();
+                fila[7] = almacen.getTWTotal();
+                fila[8] = almacen.getTPenTotal();
+                fila[9] = almacen.getTEsperaTotal();
+                resultadosTableModel.addRow(fila);
+                fila[0] = "Promedio:";
+                fila[1] = "";
+                fila[2] = "";
+                fila[3] = "";
+                fila[4] = "";
+                fila[5] = almacen.getTRetPromedio();
+                fila[6] = almacen.getTRespPromedio();
+                fila[7] = almacen.getTWPromedio();
+                fila[8] = almacen.getTPenPromedio();
+                fila[9] = almacen.getTEsperaPromedio();
+                resultadosTableModel.addRow(fila);
+
                 poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
                 JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
@@ -291,7 +320,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             tiempoDeRafagasTotales += tiempoDeRafagasTotales + (8 - (tiempoDeRafagasTotales % 8));
         }
 
-        tablasLue = (tiempoDeRafagasTotales / 8) + 3;
+        tablasLue = (tiempoDeRafagasTotales / 8) + 5;
 
         // CREAMOS LA TABLA
         Object fila[] = new Object[9];
@@ -330,33 +359,35 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
 
         // POBLAMOS LA FILA DE ABAJO - E
+        int start = arregloProcesos.get(0).getTiempoLLegada();
         contador = 0;
         contadorRow = 2;
-
+        boolean flag = false;
         for (int i = 0; i < tablasLue; i++) {
-            poblarE(contadorRow, contador, arregloLUE);
+            flag = poblarE(contadorRow, contador, arregloLUE, arregloProcesos, start, flag);
             contadorRow += 3;
         }
-
     }
 
-    private int poblarE(int row, int contador, ArrayList<String> arregloProcesos) {
+    private boolean poblarE(int row, int contador, ArrayList<String> arregloLue, ArrayList<proceso> arregloProcesos, int start, boolean flag) {
+        
         int valor;
         String id;
 
         for (int i = 1; i < lueTableModel.getColumnCount(); i++) {
             if (i % 2 != 0) {
                 valor = Integer.parseInt(lueTableModel.getValueAt(row - 1, i).toString());
-                if (valor < arregloProcesos.size()) {
+                if (valor < arregloLue.size()) {
 
-                    id = arregloProcesos.get(valor);
+                    id = arregloLue.get(valor);
                     lueTableModel.setValueAt(id, row, i + 1);
                     contador += 1;
 
                 }
             }
         }
-        return contador;
+        
+        return flag;
 
     }
 
@@ -417,8 +448,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             for(int i = filasLues-1; i >= 0; i--){
                 lueTableModel.removeRow(i);
             }
-            almacen.getArregloProcesos().clear();
-            
+            almacen.limpiar();          
             
 
         } catch (Exception e) {

@@ -10,7 +10,8 @@ public class RounRobin {
 
     public ArrayList<String> RR(ArrayList<proceso> arregloProceso, int quantum) {
 
-        ArrayList<String> arregloParaLUE = new ArrayList<String>(); // Arreglo a devolver para la tabla LUE// Para ver si este no esta vacio al principio
+        ArrayList<String> arregloParaLUE = new ArrayList<String>(); // Arreglo a devolver para la tabla LUE// Para ver
+                                                                    // si este no esta vacio al principio
         for (int i = 0; i < arregloProceso.size(); i++) {
             for (int j = 0; j < arregloProceso.size() - 1; j++) {
                 if (arregloProceso.get(j).getTiempoLLegada() > arregloProceso.get(j + 1).getTiempoLLegada()) {
@@ -22,14 +23,14 @@ public class RounRobin {
         }
         int empiezaArreglo = arregloProceso.get(0).getTiempoLLegada();
         int arrRafaga[] = new int[arregloProceso.size()];
-        int i,j;
-for (i = 0; i < empiezaArreglo; i++) {// Para manejar la rafaga y saber si aun hay rafaga o no;
+        int i, j;
+        for (i = 0; i < empiezaArreglo; i++) {// Para manejar la rafaga y saber si aun hay rafaga o no;
             arregloParaLUE.add(" ");
         }
         for (i = 0; i < arregloProceso.size(); i++) {// Para manejar la rafaga y saber si aun hay rafaga o no;
             arrRafaga[i] = arregloProceso.get(i).getRafaga();
         }
-        int aux = 0,aux2=0;
+        int aux = 0, aux2 = 0;
         do {
             if (aux == arregloProceso.size()) {
                 aux = 0;
@@ -43,28 +44,28 @@ for (i = 0; i < empiezaArreglo; i++) {// Para manejar la rafaga y saber si aun h
                             arregloParaLUE.add(arregloProceso.get(aux).getId());
                         }
                         empiezaArreglo += quantum;
-                        if(arrRafaga[aux] == quantum) {
+                        if (arrRafaga[aux] == quantum) {
                             arregloProceso.get(aux).setTiempoFinalizacion(empiezaArreglo);
-                            aux2+=1;
+                            aux2 += 1;
                         }
                         arrRafaga[aux] -= quantum;
-                    } else if(arrRafaga[aux] > 0 && arrRafaga[aux] < quantum) {
+                    } else if (arrRafaga[aux] > 0 && arrRafaga[aux] < quantum) {
                         for (j = 0; j < arrRafaga[aux]; j++) {
                             arregloParaLUE.add(arregloProceso.get(aux).getId());
                         }
                         empiezaArreglo += arrRafaga[aux];
                         arregloProceso.get(aux).setTiempoFinalizacion(empiezaArreglo);
                         arrRafaga[aux] = 0;
-                        aux2+=1;
+                        aux2 += 1;
                     }
                 }
                 aux += 1;
             }
             System.out.println(aux2);
         } while (aux2 != arregloProceso.size());
-      for(i=0;i<arregloProceso.size();i++){
-          arregloProceso.get(i).setParametros();
-      }
+        for (i = 0; i < arregloProceso.size(); i++) {
+            arregloProceso.get(i).setParametros();
+        }
         return arregloParaLUE;
     }
 
