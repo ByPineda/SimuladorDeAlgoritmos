@@ -6,7 +6,7 @@ Este README será el registro que tendremos y las guías de uso del repositorio.
 ## Estructura de las carpetas
 
 Las carpetas tendrán el siguiente orden y uso: <br>
--'bin': Proyecto compilado.
+-'bin': Proyecto compilado.<br>
 -'src': Proyecto principal <br>
     -'assets': Aquí se encuentran recursos utilizados para el proyecto por ejemplo: imagenes, etc...<br>
     -'lib': Aquí se encuentran las librerías o clases externas utilizadas. <br>
