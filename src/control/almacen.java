@@ -1,10 +1,16 @@
 package control;
 
 import model.*;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class almacen {
     private ArrayList<proceso> ArregloProcesos;
+    private ArrayList<String> tablaLue;
+
+    private String algoritmo;
+
     private int TRetTotal, TRetPromedio;
     private int TRespTotal, TRespPromedio;
     private int TWTotal, TWPromedio;
@@ -17,9 +23,28 @@ public class almacen {
 
     public almacen() {
         ArregloProcesos = new ArrayList<proceso>();
+        tablaLue = new ArrayList<String>();
+        planificadores = new ArrayList<planificador>();
     }
 
     // Setters y Getters
+
+    public String getAlgoritmo() {
+        return algoritmo;
+    }
+
+    public void setAlgoritmo(String algoritmo) {
+        this.algoritmo = algoritmo;
+    }
+
+    public ArrayList<String> getTablaLue() {
+        return tablaLue;
+    }
+
+    public void setTablaLue(ArrayList<String> tablaLue) {
+        this.tablaLue = tablaLue;
+    }
+
     public ArrayList<proceso> getArregloProcesos() {
         return ArregloProcesos;
     }
@@ -143,6 +168,7 @@ public class almacen {
 
     public void limpiar(){
         ArregloProcesos.clear();
+        tablaLue.clear();
 
         TRetTotal = 0;
         TRetPromedio = 0;
@@ -157,5 +183,27 @@ public class almacen {
 
         quantum = 0;
     }
+
+    public void guardarPlanificador(){
+        planificador aux = new planificador(algoritmo, ArregloProcesos, tablaLue, quantum, TRetTotal, TRetPromedio, TRespTotal, TRespPromedio, TWTotal, TWPromedio, TPenTotal, TPenPromedio, TEsperaTotal, TEsperaPromedio);
+        planificadores.add(aux);
+
+        TRetTotal = 0;
+        TRetPromedio = 0;
+        TRespTotal = 0;
+        TRespPromedio = 0;
+        TWTotal = 0;
+        TWPromedio = 0;
+        TPenTotal = 0;
+        TPenPromedio = 0;
+        TEsperaTotal = 0;
+        TEsperaPromedio = 0;
+
+        quantum = 0;
+
+        ArregloProcesos.clear();
+        tablaLue.clear();
+    }
+    
 
 }

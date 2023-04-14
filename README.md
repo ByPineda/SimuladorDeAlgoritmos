@@ -17,11 +17,9 @@ en la carpeta 'bin' se encontrará el proyecto compilado.<br>
 
 ## Pendientes
 <ul>
-    <li>Implementar el almacenaje de los planificadores para compararlos</li>
-    <li>Añadir pestaña de commparación</li>
-    <li>Añadir botón para guardar planificador</li>
     <li>Añadir botón desplegable para elegir cual planificador cargar.</li>
-    <li>Modificar el botón de limpieza para poder limpiar de forma correcta todo.</li>
+    <li>Implementar cómo se va a guardar en un archivo la pestaña de comparación.</li>
+
 </ul>
 
 ## Anotaciones

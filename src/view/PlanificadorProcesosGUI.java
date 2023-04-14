@@ -15,16 +15,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTabbedPane;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 import control.RounRobin;
 import control.almacen;
 import control.fifo;
+import model.planificador;
 import model.proceso;
 import lib.*;
 
-class TablaNoEditable extends DefaultTableModel{
+class TablaNoEditable extends DefaultTableModel {
     public TablaNoEditable() {
     }
 
@@ -33,16 +33,28 @@ class TablaNoEditable extends DefaultTableModel{
         return false;
     }
 }
+
 public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
-    private DefaultTableModel lueTableModel;
+    // Tabs
+    private TablaNoEditable lueTableModel;
+    private TablaNoEditable resultadosTableModel;
+    private TablaNoEditable comparacionesTable;
     private DefaultTableModel procesosTableModel;
+
+    // Tables
     private JTable procesosTable;
-    private DefaultTableModel resultadosTableModel;
     private JTable resultadosTable;
     private JTable lueTable;
+    private JTable comparaciones;
+
+    // TextFields
     private JTextField procesoTxt, tiempoLlegadaTxt, rafagaTxt, quantumTxt;
+
+    // Botones
     private JComboBox<String> metodoCmb;
+
+    // Almacen
     private almacen almacen = new almacen();
 
     public PlanificadorProcesosGUI() {
@@ -83,6 +95,19 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         lueTableModel.addColumn(" ");
         lueTable = new JTable(lueTableModel);
 
+        comparacionesTable = new TablaNoEditable();
+        comparacionesTable.addColumn("Proceso");
+        comparacionesTable.addColumn("Tiempo de llegada");
+        comparacionesTable.addColumn("Ráfaga");
+        comparacionesTable.addColumn("Tiempo de arranque");
+        comparacionesTable.addColumn("Tiempo finalización");
+        comparacionesTable.addColumn("Tiempo retorno");
+        comparacionesTable.addColumn("Tiempo respuesta");
+        comparacionesTable.addColumn("Tasa desperdicio");
+        comparacionesTable.addColumn("Tasa penalización");
+        comparacionesTable.addColumn("Tiempo de espera");
+        comparaciones = new JTable(comparacionesTable);
+
         // //Ejemplo de como se ve la tabla de procesos
         // for (int i = 0; i < 5; i++) {
         // Object[] fila = new Object[4];
@@ -110,6 +135,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         JButton limpiarBtn = new JButton("Limpiar");
         limpiarBtn.addActionListener(this);
 
+        JButton guardarBtn = new JButton("Guardar");
+        guardarBtn.addActionListener(this);
+
         JPanel datosPanel = new JPanel(new FlowLayout());
         datosPanel.add(procesoTxt);
         datosPanel.add(tiempoLlegadaTxt);
@@ -127,11 +155,13 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         botonesPanel.add(eliminarBtn);
         botonesPanel.add(calcularBtn);
         botonesPanel.add(limpiarBtn);
+        botonesPanel.add(guardarBtn);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Procesos", new JScrollPane(procesosTable));
         tabbedPane.addTab("Resultados", new JScrollPane(resultadosTable));
         tabbedPane.addTab("LUE", new JScrollPane(lueTable));
+        tabbedPane.addTab("Comparaciones", new JScrollPane(comparaciones));
 
         JPanel principalPanel = new JPanel(new BorderLayout());
         principalPanel.add(tabbedPane, BorderLayout.CENTER);
@@ -159,7 +189,15 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             if (((String) metodoCmb.getSelectedItem()).equals("Round Robin")) {
                 ArrayList<String> arregloParaLUE = new ArrayList<String>();
                 RounRobin RR = new RounRobin();
+
+                /*
+                 * Falta refactorizar el código para que no se repita tanto, pero por ahora lo
+                 * dejamos asi.
+                 */
                 arregloParaLUE = RR.RR(almacen.getArregloProcesos(), almacen.getQuantum());
+                almacen.setTablaLue(arregloParaLUE);
+                almacen.setAlgoritmo("RR");
+
                 for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
                     Object[] fila = new Object[10];
                     fila[0] = almacen.getArregloProcesos().get(i).getId();
@@ -174,7 +212,6 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
                 }
-                
 
                 poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
             } else {
@@ -182,6 +219,8 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
                 ArrayList<String> arregloParaLUE = new ArrayList<String>();
                 arregloParaLUE = fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size());
+                almacen.setTablaLue(arregloParaLUE);
+                almacen.setAlgoritmo("FIFO");
                 for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
                     Object[] fila = new Object[10];
                     fila[0] = almacen.getArregloProcesos().get(i).getId();
@@ -196,7 +235,6 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                     fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
                     resultadosTableModel.addRow(fila);
 
-                    
                 }
                 almacen.obtenerPromedios();
                 Object[] fila = new Object[10];
@@ -227,8 +265,19 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
         } else if (accion.equals("Limpiar")) {
-            JOptionPane.showMessageDialog(this, "Limpiando");
-            limpiar();
+            if (almacen.getArregloProcesos().size() == 0) {
+                JOptionPane.showMessageDialog(this, "No hay procesos para limpiar");
+            } else {
+                JOptionPane.showMessageDialog(this, "Limpiando");
+                limpiar();
+            }
+        } else if (accion.equals("Guardar")) {
+            if (almacen.getArregloProcesos().size() == 0) {
+                JOptionPane.showMessageDialog(this, "No hay procesos para guardar");
+            } else {
+                guardarPlanificador();
+            }
+
         }
 
     }
@@ -369,8 +418,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
     }
 
-    private boolean poblarE(int row, int contador, ArrayList<String> arregloLue, ArrayList<proceso> arregloProcesos, int start, boolean flag) {
-        
+    private boolean poblarE(int row, int contador, ArrayList<String> arregloLue, ArrayList<proceso> arregloProcesos,
+            int start, boolean flag) {
+
         int valor;
         String id;
 
@@ -386,7 +436,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                 }
             }
         }
-        
+
         return flag;
 
     }
@@ -432,8 +482,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         }
         procesosTableModel.removeRow(filaSeleccionada);
         almacen.getArregloProcesos().remove(filaSeleccionada);
-        // DEBUG CODE System.out.println("Proceso " +
-        // almacen.getArregloProcesos().get(0).getId() + " agregado");
+
     }
 
     private void limpiar() {
@@ -441,15 +490,14 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             int numeroDeFilas = procesosTableModel.getRowCount();
             int filasLues = lueTableModel.getRowCount();
 
-            for (int i = numeroDeFilas-1; i >= 0; i--) {
+            for (int i = numeroDeFilas - 1; i >= 0; i--) {
                 procesosTableModel.removeRow(i);
                 resultadosTableModel.removeRow(i);
             }
-            for(int i = filasLues-1; i >= 0; i--){
+            for (int i = filasLues - 1; i >= 0; i--) {
                 lueTableModel.removeRow(i);
             }
-            almacen.limpiar();          
-            
+            almacen.limpiar();
 
         } catch (Exception e) {
             System.out.println("Error al limpiar");
@@ -458,5 +506,88 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
     }
 
-    
+    private void guardarPlanificador() {
+        almacen.guardarPlanificador();
+        try {
+            int numeroDeFilas = procesosTableModel.getRowCount();
+            int filasLues = lueTableModel.getRowCount();
+            int filasResultados = resultadosTableModel.getRowCount();
+            int filasComparaciones = comparacionesTable.getRowCount();
+
+            for (int i = numeroDeFilas - 1; i >= 0; i--) {
+                procesosTableModel.removeRow(i);
+            }
+            for (int i = filasResultados - 1; i >= 0; i--) {
+                resultadosTableModel.removeRow(i);
+            }
+            for (int i = filasLues - 1; i >= 0; i--) {
+                lueTableModel.removeRow(i);
+            }
+            for (int i = filasComparaciones - 1; i >= 0; i--) {
+                comparacionesTable.removeRow(i);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al limpiar");
+
+        }
+        poblarComparaciones();
+
+    }
+
+    private void poblarComparaciones() {
+
+        for (int i = 0; i < almacen.getPlanificadores().size(); i++) {
+            planificador elemento = almacen.getPlanificadores().get(i);
+            Object[] fila = new Object[10];
+            fila[0] = elemento.getAlgoritmo();
+            for (int l = 1; l < 9; l++) {
+                fila[l] = "";
+            }
+            comparacionesTable.addRow(fila);
+
+            for (int k = 0; k < elemento.getProcesosOrdenados().size(); k++) {
+                fila[0] = elemento.getProcesosOrdenados().get(k).getId();
+                fila[1] = elemento.getProcesosOrdenados().get(k).getTiempoLLegada();
+                fila[2] = elemento.getProcesosOrdenados().get(k).getRafaga();
+                fila[3] = elemento.getProcesosOrdenados().get(k).getTiempoArranque();
+                fila[4] = elemento.getProcesosOrdenados().get(k).getTiempoFinalizacion();
+                fila[5] = elemento.getProcesosOrdenados().get(k).getTiempoRetorno();
+                fila[6] = elemento.getProcesosOrdenados().get(k).getTiempoRespuesta();
+                fila[7] = elemento.getProcesosOrdenados().get(k).getTasaDesperdicio();
+                fila[8] = elemento.getProcesosOrdenados().get(k).getTasaPenalizacion();
+                fila[9] = elemento.getProcesosOrdenados().get(k).getTiempoEspera();
+                comparacionesTable.addRow(fila);
+            }
+            fila[0] = "Tiempo Total:";
+            fila[1] = "";
+            fila[2] = "";
+            fila[3] = "";
+            fila[4] = "";
+            fila[5] = elemento.getTRetTotal();
+            fila[6] = elemento.getTRespTotal();
+            fila[7] = elemento.getTWTotal();
+            fila[8] = elemento.getTPenTotal();
+            fila[9] = elemento.getTEsperaTotal();
+            comparacionesTable.addRow(fila);
+            fila[0] = "Promedio:";
+            fila[1] = "";
+            fila[2] = "";
+            fila[3] = "";
+            fila[4] = "";
+            fila[5] = elemento.getTRetPromedio();
+            fila[6] = elemento.getTRespPromedio();
+            fila[7] = elemento.getTWPromedio();
+            fila[8] = elemento.getTPenPromedio();
+            fila[9] = elemento.getTEsperaPromedio();
+            comparacionesTable.addRow(fila);
+
+            for (int j = 0; j < fila.length; j++) {
+                fila[j] = "********";
+            }
+            comparacionesTable.addRow(fila);
+        }
+
+    }
+
 }
