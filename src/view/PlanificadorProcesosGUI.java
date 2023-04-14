@@ -185,84 +185,87 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         } else if (accion.equals("Eliminar Proceso")) {
             eliminarProceso();
         } else if (accion.equals("Calcular")) {
-            // Aquí puedes implementar la lógica de cálculo y llenar la tabla de resultados
-            if (((String) metodoCmb.getSelectedItem()).equals("Round Robin")) {
-                ArrayList<String> arregloParaLUE = new ArrayList<String>();
-                RounRobin RR = new RounRobin();
-
-                /*
-                 * Falta refactorizar el código para que no se repita tanto, pero por ahora lo
-                 * dejamos asi.
-                 */
-                arregloParaLUE = RR.RR(almacen.getArregloProcesos(), almacen.getQuantum());
-                almacen.setTablaLue(arregloParaLUE);
-                almacen.setAlgoritmo("RR");
-
-                for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
-                    Object[] fila = new Object[10];
-                    fila[0] = almacen.getArregloProcesos().get(i).getId();
-                    fila[1] = almacen.getArregloProcesos().get(i).getTiempoLLegada();
-                    fila[2] = almacen.getArregloProcesos().get(i).getRafaga();
-                    fila[3] = almacen.getArregloProcesos().get(i).getTiempoArranque();
-                    fila[4] = almacen.getArregloProcesos().get(i).getTiempoFinalizacion();
-                    fila[5] = almacen.getArregloProcesos().get(i).getTiempoRetorno();
-                    fila[6] = almacen.getArregloProcesos().get(i).getTiempoRespuesta();
-                    fila[7] = almacen.getArregloProcesos().get(i).getTasaDesperdicio();
-                    fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
-                    fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
-                    resultadosTableModel.addRow(fila);
-                }
-
-                poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
+            if (almacen.getArregloProcesos().size() == 0) {
+                JOptionPane.showMessageDialog(this, "No hay procesos para calcular");
             } else {
-                fifo fifo = new fifo();
-
-                ArrayList<String> arregloParaLUE = new ArrayList<String>();
-                arregloParaLUE = fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size());
-                almacen.setTablaLue(arregloParaLUE);
-                almacen.setAlgoritmo("FIFO");
-                for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
+                if (((String) metodoCmb.getSelectedItem()).equals("Round Robin")) {
+                    ArrayList<String> arregloParaLUE = new ArrayList<String>();
+                    RounRobin RR = new RounRobin();
+    
+                    /*
+                     * Falta refactorizar el código para que no se repita tanto, pero por ahora lo
+                     * dejamos asi.
+                     */
+                    arregloParaLUE = RR.RR(almacen.getArregloProcesos(), almacen.getQuantum());
+                    almacen.setTablaLue(arregloParaLUE);
+                    almacen.setAlgoritmo("RR");
+    
+                    for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
+                        Object[] fila = new Object[10];
+                        fila[0] = almacen.getArregloProcesos().get(i).getId();
+                        fila[1] = almacen.getArregloProcesos().get(i).getTiempoLLegada();
+                        fila[2] = almacen.getArregloProcesos().get(i).getRafaga();
+                        fila[3] = almacen.getArregloProcesos().get(i).getTiempoArranque();
+                        fila[4] = almacen.getArregloProcesos().get(i).getTiempoFinalizacion();
+                        fila[5] = almacen.getArregloProcesos().get(i).getTiempoRetorno();
+                        fila[6] = almacen.getArregloProcesos().get(i).getTiempoRespuesta();
+                        fila[7] = almacen.getArregloProcesos().get(i).getTasaDesperdicio();
+                        fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
+                        fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
+                        resultadosTableModel.addRow(fila);
+                    }
+    
+                    poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
+                } else {
+                    fifo fifo = new fifo();
+    
+                    ArrayList<String> arregloParaLUE = new ArrayList<String>();
+                    arregloParaLUE = fifo.FCFS(almacen.getArregloProcesos(), almacen.getArregloProcesos().size());
+                    almacen.setTablaLue(arregloParaLUE);
+                    almacen.setAlgoritmo("FIFO");
+                    for (int i = 0; i < almacen.getArregloProcesos().size(); i++) {
+                        Object[] fila = new Object[10];
+                        fila[0] = almacen.getArregloProcesos().get(i).getId();
+                        fila[1] = almacen.getArregloProcesos().get(i).getTiempoLLegada();
+                        fila[2] = almacen.getArregloProcesos().get(i).getRafaga();
+                        fila[3] = almacen.getArregloProcesos().get(i).getTiempoArranque();
+                        fila[4] = almacen.getArregloProcesos().get(i).getTiempoFinalizacion();
+                        fila[5] = almacen.getArregloProcesos().get(i).getTiempoRetorno();
+                        fila[6] = almacen.getArregloProcesos().get(i).getTiempoRespuesta();
+                        fila[7] = almacen.getArregloProcesos().get(i).getTasaDesperdicio();
+                        fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
+                        fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
+                        resultadosTableModel.addRow(fila);
+    
+                    }
+                    almacen.obtenerPromedios();
                     Object[] fila = new Object[10];
-                    fila[0] = almacen.getArregloProcesos().get(i).getId();
-                    fila[1] = almacen.getArregloProcesos().get(i).getTiempoLLegada();
-                    fila[2] = almacen.getArregloProcesos().get(i).getRafaga();
-                    fila[3] = almacen.getArregloProcesos().get(i).getTiempoArranque();
-                    fila[4] = almacen.getArregloProcesos().get(i).getTiempoFinalizacion();
-                    fila[5] = almacen.getArregloProcesos().get(i).getTiempoRetorno();
-                    fila[6] = almacen.getArregloProcesos().get(i).getTiempoRespuesta();
-                    fila[7] = almacen.getArregloProcesos().get(i).getTasaDesperdicio();
-                    fila[8] = almacen.getArregloProcesos().get(i).getTasaPenalizacion();
-                    fila[9] = almacen.getArregloProcesos().get(i).getTiempoEspera();
+                    fila[0] = "Tiempo Total:";
+                    fila[1] = "";
+                    fila[2] = "";
+                    fila[3] = "";
+                    fila[4] = "";
+                    fila[5] = almacen.getTRetTotal();
+                    fila[6] = almacen.getTRespTotal();
+                    fila[7] = almacen.getTWTotal();
+                    fila[8] = almacen.getTPenTotal();
+                    fila[9] = almacen.getTEsperaTotal();
                     resultadosTableModel.addRow(fila);
-
+                    fila[0] = "Promedio:";
+                    fila[1] = "";
+                    fila[2] = "";
+                    fila[3] = "";
+                    fila[4] = "";
+                    fila[5] = almacen.getTRetPromedio();
+                    fila[6] = almacen.getTRespPromedio();
+                    fila[7] = almacen.getTWPromedio();
+                    fila[8] = almacen.getTPenPromedio();
+                    fila[9] = almacen.getTEsperaPromedio();
+                    resultadosTableModel.addRow(fila);
+    
+                    poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
+                    JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
                 }
-                almacen.obtenerPromedios();
-                Object[] fila = new Object[10];
-                fila[0] = "Tiempo Total:";
-                fila[1] = "";
-                fila[2] = "";
-                fila[3] = "";
-                fila[4] = "";
-                fila[5] = almacen.getTRetTotal();
-                fila[6] = almacen.getTRespTotal();
-                fila[7] = almacen.getTWTotal();
-                fila[8] = almacen.getTPenTotal();
-                fila[9] = almacen.getTEsperaTotal();
-                resultadosTableModel.addRow(fila);
-                fila[0] = "Promedio:";
-                fila[1] = "";
-                fila[2] = "";
-                fila[3] = "";
-                fila[4] = "";
-                fila[5] = almacen.getTRetPromedio();
-                fila[6] = almacen.getTRespPromedio();
-                fila[7] = almacen.getTWPromedio();
-                fila[8] = almacen.getTPenPromedio();
-                fila[9] = almacen.getTEsperaPromedio();
-                resultadosTableModel.addRow(fila);
-
-                poblarTablaLUE(almacen.getArregloProcesos(), arregloParaLUE);
-                JOptionPane.showMessageDialog(this, "FIFO Aplicado. Revisa la tabla de resultados y LUE");
             }
         } else if (accion.equals("Limpiar")) {
             if (almacen.getArregloProcesos().size() == 0) {
@@ -588,6 +591,10 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
             comparacionesTable.addRow(fila);
         }
 
+    }
+
+    public void escribirExcel(){
+        
     }
 
 }
