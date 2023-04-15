@@ -13,7 +13,6 @@ Las carpetas tendrán el siguiente orden y uso: <br>
     -'control': Aquí se encuentran las clases controladoras del proyecto, para que se siga el modelo MVC.<br>
     -'model': Aquí se encuentran las clases modelo para los objetos.
 
-en la carpeta 'bin' se encontrará el proyecto compilado.<br>
 
 ## Pendientes
 <ul>
