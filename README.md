@@ -17,12 +17,18 @@ en la carpeta 'bin' se encontrará el proyecto compilado.<br>
 
 ## Pendientes
 <ul>
-    <li>Añadir botón desplegable para elegir cual planificador cargar.</li>
-    <li>Implementar cómo se va a guardar en un archivo la pestaña de comparación.</li>
+    <li><b>OPCIONALES</b></li>
+    <ul>
+        <li>Dar formato gráfico al archivo .xsls</li>
+        <li>Mejorar la UI</li>
+    </ul>
 
 </ul>
 
 ## Anotaciones
 Este proyecto es open source y lo quiero dejar publico para la comunidad universitaria que lo necesite.
 Si quieren implementar más algoritmos lo pueden hacer, las funciones estan hechas solo es cuenstión de añadirlo.
-Esto se debe a que utilizamos el modelo MVC (Model Control View) y nos permite tener un código limpio, con poca cohesión y alto acoplamiento.
+Esto se debe a que utilizamos el modelo MVC (Model Control View) y nos permite tener un código limpio, con poca cohesión y alto acoplamiento.<br><br>
+
+El proyecto contiene librerías externas de Apache.<br>
+Más información en: https://poi.apache.org/

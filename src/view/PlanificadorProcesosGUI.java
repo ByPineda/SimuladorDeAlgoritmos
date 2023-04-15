@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import control.RounRobin;
 import control.almacen;
 import control.fifo;
+import control.fileManager;
 import model.planificador;
 import model.proceso;
 import lib.*;
@@ -138,6 +139,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         JButton guardarBtn = new JButton("Guardar");
         guardarBtn.addActionListener(this);
 
+        JButton exportBtn = new JButton("Exportar");
+        exportBtn.addActionListener(this);
+
         JPanel datosPanel = new JPanel(new FlowLayout());
         datosPanel.add(procesoTxt);
         datosPanel.add(tiempoLlegadaTxt);
@@ -156,6 +160,7 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         botonesPanel.add(calcularBtn);
         botonesPanel.add(limpiarBtn);
         botonesPanel.add(guardarBtn);
+        botonesPanel.add(exportBtn);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Procesos", new JScrollPane(procesosTable));
@@ -281,7 +286,15 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
                 guardarPlanificador();
             }
 
+        } else if(accion.equals("Exportar")){
+            if (almacen.getPlanificadores().size() == 0) {
+                JOptionPane.showMessageDialog(this, "No hay procesos para exportar");
+            } else {
+                exportarPlanificador(almacen.getPlanificadores());
+            }
         }
+
+        
 
     }
 
@@ -338,8 +351,6 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
         // almacén-------------------------------------------------------
         proceso procAux = new proceso(proceso, tiempoLlegada, rafaga);
         almacen.getArregloProcesos().add(procAux);
-        // DEBUG CODE System.out.println("Proceso " +
-        // almacen.getArregloProcesos().get(0).getId() + " agregado");
 
         // Insertar proceso en la
         // tabla---------------------------------------------------------
@@ -593,8 +604,9 @@ public class PlanificadorProcesosGUI extends JFrame implements ActionListener {
 
     }
 
-    public void escribirExcel(){
-        
+    public void exportarPlanificador(ArrayList<planificador> arrayIn){
+        fileManager fm = new fileManager();
+        fm.escribirExcel(arrayIn);
     }
 
 }
