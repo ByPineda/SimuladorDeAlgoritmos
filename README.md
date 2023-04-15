@@ -19,8 +19,9 @@ en la carpeta 'bin' se encontrará el proyecto compilado.<br>
 <ul>
     <li><b>OPCIONALES</b></li>
     <ul>
-        <li>Dar formato gráfico al archivo .xsls</li>
+        <li>Dar formato gráfico al archivo .xlsx</li>
         <li>Mejorar la UI</li>
+        <li>Añadir los algoritmos restantes: Prioridad, SJF, SRT</li>
     </ul>
 
 </ul>
