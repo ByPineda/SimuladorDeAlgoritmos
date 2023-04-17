@@ -8,11 +8,13 @@ public class planificador {
     private int quantum;
     ArrayList<proceso> procesosOrdenados;
     ArrayList<String> tablaLue;
-    private int TRetTotal, TRetPromedio;
-    private int TRespTotal, TRespPromedio;
-    private int TWTotal, TWPromedio;
-    private int TPenTotal, TPenPromedio;
-    private int TEsperaTotal, TEsperaPromedio;
+    private int TRetTotal ;
+    private int TRespTotal ;
+    private int TWTotal;
+    private int TPenTotal ;
+    private int TEsperaTotal;
+
+    private float TRetPromedio, TRespPromedio, TWPromedio, TPenPromedio,TEsperaPromedio;
 
     // Constructor
     public planificador(String algoritmo, ArrayList<proceso> arregloIn, ArrayList<String> tablaLue, int quantum,
@@ -67,7 +69,7 @@ public class planificador {
         this.TRetTotal = TRetTotal;
     }
 
-    public int getTRetPromedio() {
+    public float getTRetPromedio() {
         return TRetPromedio;
     }
 
@@ -83,7 +85,7 @@ public class planificador {
         this.TRespTotal = TRespTotal;
     }
 
-    public int getTRespPromedio() {
+    public float getTRespPromedio() {
         return TRespPromedio;
     }
 
@@ -99,7 +101,7 @@ public class planificador {
         this.TWTotal = TWTotal;
     }
 
-    public int getTWPromedio() {
+    public float getTWPromedio() {
         return TWPromedio;
     }
 
@@ -115,7 +117,7 @@ public class planificador {
         this.TPenTotal = TPenTotal;
     }
 
-    public int getTPenPromedio() {
+    public float getTPenPromedio() {
         return TPenPromedio;
     }
 
@@ -131,7 +133,7 @@ public class planificador {
         this.TEsperaTotal = TEsperaTotal;
     }
 
-    public int getTEsperaPromedio() {
+    public float getTEsperaPromedio() {
         return TEsperaPromedio;
     }
 
